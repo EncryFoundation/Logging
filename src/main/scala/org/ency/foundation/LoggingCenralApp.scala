@@ -12,20 +12,19 @@ object LoggingCenralApp extends App {
     .master("local")
     .getOrCreate()
 
-  //val streamingContext = new StreamingContext()
-
   sparkSession.sparkContext.setLogLevel("ERROR")
 
   import sparkSession.implicits._
+
+  val kafkaBrokers = "172.16.10.55:9092"
 
   val logFrame = sparkSession.
     readStream.format("kafka")
     .option("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer")
     .option("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer")
-    .option("kafka.bootstrap.servers", "localhost:9092")
+    .option("kafka.bootstrap.servers", kafkaBrokers)
     .option("subscribe", "Logs")
     .option("startingOffsets", "earliest")
-    //.option("endingOffsets", "latest")
     .option("group.id", "encry")
     .load()
 
@@ -38,12 +37,10 @@ object LoggingCenralApp extends App {
     .withColumn("Value", $"value".cast(StringType))
     .select("Key", "Value", "Partition", "Offset", "Timestamp")
 
-  transformedLogFrame.writeStream
+  transformedLogFrame.select("Partition", "Value", "Timestamp")
+    .writeStream
     .format("console")
-    //.outputMode("complete")
-    .trigger(Trigger.ProcessingTime("10 seconds"))
+    .trigger(Trigger.ProcessingTime("3 seconds"))
     .start()
     .awaitTermination()
-
-  print(transformedLogFrame.count())
 }
