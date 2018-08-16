@@ -1,5 +1,7 @@
+package org.ency.foundation
+
 import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.streaming.{ProcessingTime, Trigger}
+import org.apache.spark.sql.streaming.Trigger
 import org.apache.spark.sql.types._
 
 object LoggingCenralApp extends App {
@@ -10,7 +12,7 @@ object LoggingCenralApp extends App {
     .master("local")
     .getOrCreate()
 
-  val streamingContext = new StreamingContext()
+  //val streamingContext = new StreamingContext()
 
   sparkSession.sparkContext.setLogLevel("ERROR")
 
