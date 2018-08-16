@@ -1,12 +1,12 @@
 package org.ency.foundation
 
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.streaming.Trigger
 import org.apache.spark.sql.types._
 
 object LoggingCenralApp extends App {
 
-  val sparkSession = SparkSession
+  val sparkSession: SparkSession = SparkSession
     .builder
     .appName("SPARK-Logging-Processor")
     .master("local")
@@ -16,9 +16,9 @@ object LoggingCenralApp extends App {
 
   import sparkSession.implicits._
 
-  val kafkaBrokers = "172.16.10.55:9092"
+  val kafkaBrokers: String = "172.16.10.55:9092"
 
-  val logFrame = sparkSession.
+  val logFrame: DataFrame = sparkSession.
     readStream.format("kafka")
     .option("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer")
     .option("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer")
@@ -28,7 +28,7 @@ object LoggingCenralApp extends App {
     .option("group.id", "encry")
     .load()
 
-  val transformedLogFrame = logFrame
+  val transformedLogFrame: DataFrame = logFrame
     .withColumn("Key", $"key".cast(StringType))
     .withColumn("Topic", $"topic".cast(StringType))
     .withColumn("Offset", $"offset".cast(LongType))
@@ -40,7 +40,7 @@ object LoggingCenralApp extends App {
   transformedLogFrame.select("Partition", "Value", "Timestamp")
     .writeStream
     .format("console")
-    .trigger(Trigger.ProcessingTime("3 seconds"))
+    .trigger(Trigger.ProcessingTime("5 seconds"))
     .start()
     .awaitTermination()
 }
