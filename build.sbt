@@ -9,7 +9,8 @@ libraryDependencies ++= Seq(
   "org.apache.spark" % "spark-sql-kafka-0-10_2.11" % "2.3.1",
   "org.apache.spark" %% "spark-core" % "2.3.1",
   "org.scalatest" %% "scalatest" % "3.0.5" % "test",
-  "org.apache.kafka" % "kafka-clients" % "2.0.0")
+  "org.apache.kafka" % "kafka-clients" % "2.0.0",
+  "org.apache.logging.log4j" % "log4j-to-slf4j" % "2.11.1")
 
 assemblyJarName in assembly := "LoggingCentral.jar"
 

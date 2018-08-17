@@ -1,10 +1,19 @@
 package org.ency.foundation
 
+import org.apache.spark.internal.Logging
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.streaming.Trigger
-import org.apache.spark.sql.types._
+import org.apache.spark.sql.types.{IntegerType, LongType, StringType, TimestampType}
 
-object LoggingCenralApp extends App {
+object LoggingCenralApp extends App with Logging {
+
+  def a = {
+    log.debug("Start node")
+    log.info("Start node")
+    log.error("Start node")
+    log.warn("Start node")
+  }
+  a
 
   val sparkSession: SparkSession = SparkSession
     .builder
